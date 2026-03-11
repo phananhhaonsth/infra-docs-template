@@ -1,0 +1,126 @@
+site_name: Team Operations Docs
+site_description: Tài liệu vận hành nội bộ cho team Infrastructure
+site_url: https://your-org.github.io/team-docs/
+
+theme:
+  name: material
+  language: vi
+  palette:
+    - scheme: default
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-7
+        name: Chuyển sang chế độ tối
+    - scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-4
+        name: Chuyển sang chế độ sáng
+  font:
+    text: Inter
+    code: Roboto Mono
+  features:
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+    - toc.follow
+  icon:
+    logo: material/server-network
+    repo: fontawesome/brands/github
+
+repo_url: https://github.com/your-org/team-docs
+repo_name: your-org/team-docs
+edit_uri: edit/main/docs/
+
+plugins:
+  - search:
+      lang:
+        - vi
+        - en
+  - glightbox:
+      touchNavigation: true
+      loop: false
+      effect: zoom
+      slide_effect: slide
+      width: 100%
+      height: auto
+      zoomable: true
+      draggable: true
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.mark
+  - pymdownx.keys
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.tilde
+  - attr_list
+  - md_in_html
+  - def_list
+  - footnotes
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/your-org/team-docs
+  generator: false
+
+extra_css:
+  - stylesheets/extra.css
+
+nav:
+  - Home: index.md
+  - Proxmox:
+      - proxmox/index.md
+      - Cài đặt Proxmox: proxmox/cai-dat-proxmox.md
+      - Quản lý VM: proxmox/quan-ly-vm.md
+  - Tài khoản Google:
+      - google-account/index.md
+  - Server vật lý:
+      - server-vat-ly/index.md
+  - Firewall:
+      - firewall/index.md
+  - Switch Core:
+      - switch-core/index.md
+  - Switch Distribution:
+      - switch-distribution/index.md
+  - Switch Access:
+      - switch-access/index.md
+  - Controller WiFi:
+      - controller-wifi/index.md
+  - Hướng dẫn đóng góp: contributing.md

@@ -1,0 +1,122 @@
+/* Custom styles for Team Operations Docs */
+
+/* Hero section on home page */
+.md-typeset .hero {
+  text-align: center;
+  padding: 2rem 0;
+  margin-bottom: 2rem;
+}
+
+.md-typeset .hero h1 {
+  font-weight: 700;
+  font-size: 2.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.md-typeset .hero p {
+  font-size: 1.15rem;
+  opacity: 0.85;
+}
+
+/* Category cards grid */
+.md-typeset .grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.md-typeset .card {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  transition: all 0.25s ease;
+  text-decoration: none;
+  color: var(--md-default-fg-color);
+  display: block;
+}
+
+.md-typeset .card:hover {
+  border-color: var(--md-accent-fg-color);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.md-typeset .card h3 {
+  margin-top: 0;
+  color: var(--md-primary-fg-color);
+}
+
+.md-typeset .card p {
+  margin-bottom: 0;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* Status badges */
+.md-typeset .status-badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 1rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.md-typeset .status-badge.active {
+  background-color: #4caf50;
+  color: white;
+}
+
+.md-typeset .status-badge.draft {
+  background-color: #ff9800;
+  color: white;
+}
+
+/* Contributor info */
+.md-typeset .doc-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.md-typeset .doc-meta span {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Responsive video embed */
+.md-typeset .video-wrapper {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  margin: 1rem 0;
+  border-radius: 0.5rem;
+}
+
+.md-typeset .video-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Better table styling */
+.md-typeset table:not([class]) {
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+/* Print styles */
+@media print {
+  .md-typeset .grid-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
