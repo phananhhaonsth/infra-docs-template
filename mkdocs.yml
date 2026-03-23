@@ -112,7 +112,6 @@ nav:
                   - Proxmox VE:
                             - system/proxmox/index.md
                             - Cài đặt Proxmox: system/proxmox/cai-dat-proxmox.md
-                            - Quản lý VM: system/proxmox/quan-ly-vm.md
                   - File Server:
                             - system/file-server/index.md
                   - Storage:
@@ -120,6 +119,8 @@ nav:
                   - Backup & Restore:
                             - system/backup/index.md
 
+                  - vmware:
+                            - system/vmware/index.md
         - "🌐 Network":
                   - network/index.md
                   - Firewall:
@@ -134,13 +135,10 @@ nav:
                             - network/switch-access/index.md
                   - Controller WiFi:
                             - network/controller-wifi/index.md
-                  - Camera & Surveillance:
-                            - network/camera/index.md
                   - UPS:
                             - network/ups/index.md
 
         - "🏢 Sites":
-                  - sites/index.md
                   - Hà Nội:
                             - sites/ha-noi/index.md
                   - Đà Nẵng:
@@ -158,7 +156,6 @@ nav:
                             - monitoring/grafana/index.md
 
         - "👤 Account":
-                  - account/index.md
                   - Google Workspace:
                             - account/google/index.md
                   - GitHub:
@@ -171,7 +168,6 @@ nav:
                             - account/microsoft/index.md
 
         - "🔒 Security":
-                  - security/index.md
                   - CrowdStrike Falcon:
                             - security/crowdstrike/index.md
                   - ISO 27001:

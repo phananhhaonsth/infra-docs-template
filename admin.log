@@ -1,0 +1,19 @@
+nohup: ignoring input
+🚀 Admin Editor  : http://10.0.7.169:5002
+📖 Docs Site     : http://10.0.7.169:8001
+ * Serving Flask app 'admin-server'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5002
+ * Running on http://10.0.7.169:5002
+Press CTRL+C to quit
+192.168.69.109 - - [23/Mar/2026 15:17:38] "POST /api/rebuild HTTP/1.1" 500 -
+192.168.69.109 - - [23/Mar/2026 15:17:44] "POST /api/rebuild HTTP/1.1" 500 -
+192.168.69.109 - - [23/Mar/2026 15:18:32] "POST /api/rebuild HTTP/1.1" 500 -
+192.168.69.109 - - [23/Mar/2026 15:18:38] "POST /api/rebuild HTTP/1.1" 500 -
+192.168.69.109 - - [23/Mar/2026 15:20:06] "POST /api/rebuild HTTP/1.1" 500 -
+192.168.69.109 - - [23/Mar/2026 15:20:12] "POST /api/rebuild HTTP/1.1" 500 -
+192.168.69.109 - - [23/Mar/2026 15:21:12] "POST /api/rebuild HTTP/1.1" 200 -
+192.168.69.109 - - [23/Mar/2026 15:25:26] "GET /api/file?path=network/switch-core/login-switch-core.md HTTP/1.1" 200 -
+192.168.69.109 - - [23/Mar/2026 15:25:27] "GET /api/file?path=network/switch-core/index.md HTTP/1.1" 200 -

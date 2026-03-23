@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Team Docs — Admin Editor</title>
+
+    <!-- EasyMDE Markdown Editor -->
+    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css" />
+    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+
+    <!-- Turndown: HTML → Markdown -->
+    <script src="https://unpkg.com/turndown/dist/turndown.js"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet" />
+
+    <style>
+        :root {
+            --bg: #0f1117;
+            --surface: #1a1d27;
+            --surface2: #22263a;
+            --border: #2e3250;
+            --primary: #009688;
+            --primary-dark: #00796b;
+            --accent: #26c6da;
+            --text: #e8eaf6;
+            --text-muted: #7986cb;
+            --text-dim: #4a5568;
+            --success: #43a047;
+            --warning: #fb8c00;
+            --danger: #e53935;
+            --sidebar-w: 280px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ── Header ─────────────────────────────── */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0 1.25rem;
+            height: 56px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-logo {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .header-badge {
+            background: var(--primary);
+            color: white;
+            font-size: .65rem;
+            padding: .15rem .45rem;
+            border-radius: 99px;
+            font-weight: 700;
+            letter-spacing: .05em;
+        }
+
+        .header-file {
+            flex: 1;
+            font-size: .85rem;
+            color: var(--text-muted);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: .5rem;
+        }
+
+        /* ── Buttons ─────────────────────────────── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            padding: .45rem .9rem;
+            border-radius: .4rem;
+            font-size: .8rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all .18s;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 150, 136, .35);
+        }
+
+        .btn-accent {
+            background: var(--surface2);
+            color: var(--accent);
+            border: 1px solid var(--border);
+        }
+
+        .btn-accent:hover {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+
+        .btn-ghost:hover {
+            background: var(--surface2);
+            color: var(--text);
+        }
+
+        .btn-danger {
+            background: var(--surface2);
+            color: var(--danger);
+            border: 1px solid var(--border);
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* ── Layout ─────────────────────────────── */
+        .layout {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* ── Sidebar ─────────────────────────────── */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-top {
+            padding: .75rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: .4rem;
+            padding: .4rem .6rem;
+        }
+
+        .search-box input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--text);
+            font-size: .8rem;
+        }
+
+        .search-box span {
+            color: var(--text-dim);
+            font-size: .85rem;
+        }
+
+        .file-tree {
+            flex: 1;
+            overflow-y: auto;
+            padding: .5rem 0;
+        }
+
+        .file-tree::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .file-tree::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 2px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: .4rem .75rem;
+            font-size: .7rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            cursor: pointer;
+            user-select: none;
+            transition: color .15s;
+        }
+
+        .section-header:hover {
+            color: var(--text-muted);
+        }
+
+        .section-arrow {
+            transition: transform .2s;
+            font-size: .8rem;
+        }
+
+        .section-arrow.open {
+            transform: rotate(90deg);
+        }
+
+        .section-files {
+            overflow: hidden;
+        }
+
+        .section-files.collapsed {
+            display: none;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .38rem .5rem .38rem 1.5rem;
+            font-size: .8rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-left: 2px solid transparent;
+            margin: 1px 0;
+            transition: all .15s;
+            white-space: nowrap;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .file-item:hover {
+            background: var(--surface2);
+            color: var(--text);
+            border-left-color: var(--border);
+        }
+
+        .file-item.active {
+            background: rgba(0, 150, 136, .12);
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .file-item-name {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Nút action hover */
+        .file-actions {
+            display: none;
+            gap: 2px;
+            flex-shrink: 0;
+        }
+
+        .file-item:hover .file-actions {
+            display: flex;
+        }
+
+        .file-action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: .75rem;
+            line-height: 1;
+            opacity: .6;
+            transition: all .12s;
+        }
+
+        .file-action-btn:hover {
+            opacity: 1;
+            background: rgba(255, 255, 255, .1);
+        }
+
+        .file-action-btn.del:hover {
+            background: rgba(229, 57, 53, .2);
+            color: #ef9a9a;
+        }
+
+        .file-icon {
+            font-size: .8rem;
+            flex-shrink: 0;
+        }
+
+        /* ── Subsection header in sidebar ── */
+        .subsection-header {
+            display: flex;
+            align-items: center;
+            gap: .35rem;
+            padding: .3rem .5rem .3rem 1.4rem;
+            font-size: .78rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            user-select: none;
+            border-left: 2px solid transparent;
+            margin: 1px 0;
+            transition: all .15s;
+        }
+
+        .subsection-header:hover {
+            background: var(--surface2);
+            color: var(--text);
+            border-left-color: var(--border);
+        }
+
+        .subsection-arrow {
+            font-size: .65rem;
+            transition: transform .15s;
+            opacity: .5;
+            flex-shrink: 0;
+        }
+
+        .subsection-arrow.open {
+            transform: rotate(90deg);
+        }
+
+        .subsection-files.collapsed {
+            display: none;
+        }
+
+        .subsection-header-actions {
+            display: none;
+            gap: 2px;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        .subsection-header:hover .subsection-header-actions {
+            display: flex;
+        }
+
+        .subsection-del-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: .7rem;
+            opacity: .55;
+            transition: all .12s;
+        }
+
+        .subsection-del-btn:hover {
+            opacity: 1;
+            background: rgba(229, 57, 53, .2);
+        }
+
+        /* ── Editor area ────────────────────────────────────────────────── */
+        .editor-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .5rem .75rem;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+
+        .editor-toolbar-label {
+            font-size: .75rem;
+            color: var(--text-dim);
+            font-weight: 500;
+            margin-right: .25rem;
+        }
+
+        .editor-wrap {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* EasyMDE overrides */
+        .EasyMDEContainer {
+            height: 100% !important;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .EasyMDEContainer .CodeMirror {
+            flex: 1;
+            height: auto !important;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .85rem;
+            line-height: 1.7;
+            background: #12151e;
+            color: #c9d1d9;
+            border: none !important;
+            border-radius: 0;
+        }
+
+        .EasyMDEContainer .editor-toolbar {
+            background: #1a1d27;
+            border-color: var(--border);
+            border-radius: 0;
+            flex-shrink: 0;
+            padding: .35rem .75rem;
+        }
+
+        .EasyMDEContainer .editor-toolbar button {
+            color: var(--text-muted) !important;
+            border: none;
+            border-radius: .3rem;
+        }
+
+        .EasyMDEContainer .editor-toolbar button:hover,
+        .EasyMDEContainer .editor-toolbar button.active {
+            background: var(--surface2) !important;
+            color: var(--primary) !important;
+        }
+
+        .EasyMDEContainer .editor-toolbar i.separator {
+            border-color: var(--border);
+        }
+
+        .EasyMDEContainer .editor-preview {
+            background: #12151e;
+            color: var(--text);
+            padding: 1.5rem 2rem;
+        }
+
+        .CodeMirror-scroll {
+            height: 100% !important;
+        }
+
+        /* ── Fix cursor visibility ── */
+        .CodeMirror-cursor {
+            border-left: 2px solid #e8eaf6 !important;
+            border-right: none !important;
+        }
+
+        .CodeMirror-selected {
+            background: rgba(0, 150, 136, .25) !important;
+        }
+
+        .CodeMirror.CodeMirror-focused .CodeMirror-selected {
+            background: rgba(0, 150, 136, .35) !important;
+        }
+
+        /* ── Image upload drop zone hint ── */
+        .editor-wrap.drag-over .CodeMirror {
+            outline: 2px dashed var(--primary);
+            background: rgba(0, 150, 136, .05);
+        }
+
+        .upload-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform .3s;
+        }
+
+        /* ── Empty state ─────────────────────────── */
+        .empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            color: var(--text-dim);
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .empty-state h2 {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .empty-state p {
+            font-size: .85rem;
+            max-width: 300px;
+            line-height: 1.6;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            opacity: .4;
+        }
+
+        /* ── New file modal ──────────────────────── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .6);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: .75rem;
+            padding: 1.5rem;
+            width: 420px;
+            max-width: 95vw;
+        }
+
+        .modal h3 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: .35rem;
+            margin-bottom: .85rem;
+        }
+
+        .form-group label {
+            font-size: .75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .form-group select,
+        .form-group input {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: .45rem .6rem;
+            border-radius: .4rem;
+            font-size: .85rem;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            border-color: var(--primary);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: .5rem;
+            margin-top: 1.25rem;
+        }
+
+        /* ── Toast ───────────────────────────────── */
+        .toast-container {
+            position: fixed;
+            bottom: 1.25rem;
+            right: 1.25rem;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+        }
+
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            padding: .6rem 1rem;
+            border-radius: .45rem;
+            font-size: .82rem;
+            font-weight: 500;
+            animation: toastIn .25s ease;
+            min-width: 220px;
+            max-width: 340px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, .4);
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .toast.success {
+            background: #1b3a2d;
+            border: 1px solid var(--success);
+            color: #81c784;
+        }
+
+        .toast.error {
+            background: #3b1a1a;
+            border: 1px solid var(--danger);
+            color: #ef9a9a;
+        }
+
+        .toast.info {
+            background: #1a2640;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+
+        /* ── Status bar ──────────────────────────── */
+        .statusbar {
+            height: 24px;
+            background: var(--primary-dark);
+            padding: 0 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-shrink: 0;
+        }
+
+        .statusbar span {
+            font-size: .68rem;
+            color: rgba(255, 255, 255, .75);
+        }
+
+        .statusbar .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #80cbc4;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ── Modal tabs ──────────────────────────────── */
+        .modal-tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid var(--border);
+            margin: -.25rem -1.5rem 1.25rem;
+            padding: 0 1.5rem;
+        }
+
+        .modal-tab {
+            padding: .5rem 1rem;
+            font-size: .8rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            transition: all .15s;
+            user-select: none;
+        }
+
+        .modal-tab:hover {
+            color: var(--text-muted);
+        }
+
+        .modal-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .modal-panel {
+            display: none;
+        }
+
+        .modal-panel.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="header-logo">
+            📚 Team Docs
+            <span class="header-badge">ADMIN</span>
+        </div>
+        <div class="header-file" id="currentFileLabel">Chọn một file để bắt đầu soạn thảo</div>
+        <div class="header-actions">
+            <button class="btn btn-ghost" onclick="showNewFileModal()" title="Tạo bài mới">＋ Tạo mới</button>
+            <button class="btn btn-primary" id="saveBtn" onclick="saveFile()" disabled>💾 Lưu</button>
+            <button class="btn btn-accent" id="rebuildBtn" onclick="rebuild()">⚡ Build</button>
+            <button class="btn btn-ghost" id="pushBtn" onclick="gitPush()">↑ Git Push</button>
+        </div>
+    </div>
+
+    <!-- Layout -->
+    <div class="layout">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-top">
+                <div class="search-box">
+                    <span>🔍</span>
+                    <input type="text" id="searchInput" placeholder="Tìm file..." oninput="filterFiles(this.value)" />
+                </div>
+            </div>
+            <div class="file-tree" id="fileTree">
+                <div style="padding:1rem;color:var(--text-dim);font-size:.8rem;">Đang tải...</div>
+            </div>
+        </div>
+
+        <!-- Editor -->
+        <div class="editor-area" id="editorArea">
+            <div class="empty-state" id="emptyState">
+                <div class="empty-icon">✍️</div>
+                <h2>Chào mừng đến Admin Editor</h2>
+                <p>Chọn một file từ danh sách bên trái để bắt đầu soạn thảo, hoặc tạo bài viết mới.</p>
+                <button class="btn btn-primary" onclick="showNewFileModal()">＋ Tạo bài viết mới</button>
+            </div>
+            <div class="editor-wrap hidden" id="editorWrap">
+                <textarea id="editor"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status bar -->
+    <div class="statusbar">
+        <div class="dot"></div>
+        <span id="statusText">Sẵn sàng — MkDocs Admin Editor</span>
+        <span id="charCount"></span>
+    </div>
+
+    <!-- New file modal -->
+    <div class="modal-overlay hidden" id="newFileModal" onclick="hideNewFileModal(event)">
+        <div class="modal" onclick="event.stopPropagation()" style="width:460px">
+            <h3>✏️ Tạo mới</h3>
+
+            <!-- Tabs -->
+            <div class="modal-tabs">
+                <div class="modal-tab active" id="tab-file" onclick="switchModalTab('file')">📄 Bài viết</div>
+                <div class="modal-tab" id="tab-sub" onclick="switchModalTab('sub')">📁 Danh mục con</div>
+            </div>
+
+            <!-- Panel: Tạo bài viết -->
+            <div class="modal-panel active" id="panel-file">
+                <div class="form-group">
+                    <label>Danh mục chính</label>
+                    <select id="newSection" onchange="loadSubsections(this.value)"></select>
+                </div>
+                <div class="form-group" id="subsectionGroup">
+                    <label>Danh mục con <span style="color:var(--text-dim);font-weight:400">(tuỳ chọn)</span></label>
+                    <select id="newSubsection">
+                        <option value="">— Không chọn (đặt thẳng vào danh mục chính) —</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tiêu đề bài viết</label>
+                    <input type="text" id="newTitle" placeholder="Ví dụ: Cấu hình VLAN trên Switch Core"
+                        oninput="autoSlug()" />
+                </div>
+                <div class="form-group">
+                    <label>Tên file (slug)</label>
+                    <input type="text" id="newFilename" placeholder="cau-hinh-vlan" />
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-ghost" onclick="hideNewFileModal()">Hủy</button>
+                    <button class="btn btn-primary" onclick="createFile()">Tạo bài viết</button>
+                </div>
+            </div>
+
+            <!-- Panel: Tạo danh mục con -->
+            <div class="modal-panel" id="panel-sub">
+                <div class="form-group">
+                    <label>Thuộc danh mục chính</label>
+                    <select id="subSection"></select>
+                </div>
+                <div class="form-group">
+                    <label>Tên hiển thị (label)</label>
+                    <input type="text" id="subLabel" placeholder="Ví dụ: Hà Nội 2" oninput="autoSubFolder()" />
+                </div>
+                <div class="form-group">
+                    <label>Tên thư mục (slug)</label>
+                    <input type="text" id="subFolder" placeholder="ha-noi-2" />
+                </div>
+                <p style="font-size:.75rem;color:var(--text-dim);margin:-.3rem 0 .75rem">
+                    Sẽ tạo thư mục <code style="color:var(--accent)">docs/{section}/{slug}/</code> và file <code style="color:var(--accent)">index.md</code>.
+                </p>
+                <div class="modal-actions">
+                    <button class="btn btn-ghost" onclick="hideNewFileModal()">Hủy</button>
+                    <button class="btn btn-primary" onclick="createSubsection()">Tạo danh mục con</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rename modal -->
+    <div class="modal-overlay hidden" id="renameModal" onclick="hideRenameModal(event)">
+        <div class="modal" onclick="event.stopPropagation()" style="width:460px">
+            <h3>✏️ Đổi tên bài viết</h3>
+            <div class="form-group">
+                <label>File hiện tại</label>
+                <input type="text" id="renameOldPath" disabled style="opacity:.5;font-size:.75rem" />
+            </div>
+            <div class="form-group">
+                <label>Tên file mới (slug, không cần .md)</label>
+                <input type="text" id="renameNewSlug" placeholder="ten-bai-moi" />
+            </div>
+            <p style="font-size:.75rem;color:var(--text-dim);margin-top:-.4rem">
+                File sẽ được giữ nguyên danh mục, chỉ đổi tên file.
+            </p>
+            <div class="modal-actions">
+                <button class="btn btn-ghost" onclick="hideRenameModal()">Hủy</button>
+                <button class="btn btn-primary" onclick="doRename()">Lưu tên mới</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete confirm modal -->
+    <div class="modal-overlay hidden" id="deleteModal" onclick="hideDeleteModal(event)">
+        <div class="modal" onclick="event.stopPropagation()" style="width:400px">
+            <h3 style="color:var(--danger)">🗑️ Xóa bài viết</h3>
+            <p style="margin:.75rem 0;font-size:.9rem;line-height:1.6">
+                Bạn chắc muốn xóa kông?<br>
+                <strong id="deleteFileName" style="color:var(--text)"></strong>
+            </p>
+            <p style="font-size:.8rem;color:var(--text-dim)">
+                Hành động này <strong style="color:var(--danger)">không thể hoàn tác</strong>. File sẽ bị xóa khỏi đĩa
+                và nav.
+            </p>
+            <div class="modal-actions">
+                <button class="btn btn-ghost" onclick="hideDeleteModal()">Thôi, giữ lại</button>
+                <button class="btn" style="background:var(--danger);color:white" onclick="doDelete()">Xóa</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete subsection confirm modal -->
+    <div class="modal-overlay hidden" id="deleteSubModal" onclick="hideDeleteSubModal(event)">
+        <div class="modal" onclick="event.stopPropagation()" style="width:420px">
+            <h3 style="color:var(--danger)">🗑️ Xóa danh mục con</h3>
+            <p style="margin:.75rem 0;font-size:.9rem;line-height:1.6">
+                Bạn chắc muốn xóa danh mục con:<br>
+                <strong id="deleteSubName" style="color:var(--text)"></strong>
+            </p>
+            <p style="font-size:.8rem;color:var(--text-dim)">
+                Hành động này <strong style="color:var(--danger)">không thể hoàn tác</strong>.
+                Toàn bộ thư mục và các file bên trong sẽ bị xóa khỏi đĩa và nav.
+            </p>
+            <div class="modal-actions">
+                <button class="btn btn-ghost" onclick="hideDeleteSubModal()">Thôi, giữ lại</button>
+                <button class="btn" style="background:var(--danger);color:white" onclick="doDeleteSub()">Xóa danh mục con</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        let easyMDE = null;
+        let currentFile = null;
+        let allFiles = [];
+        let sections = [];
+        let sectionStates = {};
+
+        // ── Init ─────────────────────────────────────────────────────────
+        window.onload = async () => {
+            await loadFiles();
+            initEditor();
+        };
+
+        // ── Load file list ────────────────────────────────────────────────
+        async function loadFiles() {
+            const res = await fetch("/api/files");
+            allFiles = await res.json();
+            renderTree(allFiles);
+            populateSectionSelect();
+        }
+
+        function renderTree(files) {
+            const tree = document.getElementById("fileTree");
+
+            // Group by section → subsection
+            const grouped = {};
+            for (const f of files) {
+                const sec = f.section;
+                const sub = f.subsection || "";
+                if (!grouped[sec]) grouped[sec] = {};
+                if (!grouped[sec][sub]) grouped[sec][sub] = [];
+                grouped[sec][sub].push(f);
+            }
+            sections = Object.keys(grouped);
+
+            const SEC_LABELS = {
+                system: "🖥️ System", network: "🌐 Network",
+                sites: "🏢 Sites", monitoring: "📊 Monitoring",
+                account: "👤 Account", security: "🔒 Security",
+                root: "📄 Trang chủ"
+            };
+
+            tree.innerHTML = "";
+            for (const sec of sections) {
+                if (!sectionStates[sec]) sectionStates[sec] = { open: true };
+                const isOpen = sectionStates[sec].open;
+
+                const header = document.createElement("div");
+                header.className = "section-header";
+                header.innerHTML = `<span>${SEC_LABELS[sec] || "📁 " + sec}</span><span class="section-arrow ${isOpen ? 'open' : ''}">›</span>`;
+                header.onclick = () => toggleSection(sec);
+
+                const fileList = document.createElement("div");
+                fileList.className = `section-files${isOpen ? "" : " collapsed"}`;
+                fileList.id = `section-${sec}`;
+
+                const subGroups = grouped[sec];
+                for (const sub of Object.keys(subGroups)) {
+                    if (sub === "") {
+                        // Files trực tiếp trong section (không có subsection)
+                        for (const f of subGroups[sub]) {
+                            fileList.appendChild(makeFileItem(f, 1.5));
+                        }
+                    } else {
+                        const filesInSub = subGroups[sub];
+                        const indexFile = filesInSub.find(f => f.isIndex);
+                        const subLabel = indexFile ? indexFile.displayName : sub;
+                        const nonIndexFiles = filesInSub.filter(f => !f.isIndex);
+
+                        if (nonIndexFiles.length === 0) {
+                            // Chỉ có index.md → render gọn 1 dòng
+                            const item = makeFileItem(indexFile || filesInSub[0], 1.5);
+                            // Thay thế file-actions mặc định bằng nút xóa subsection
+                            const delWrap = document.createElement("div");
+                            delWrap.className = "file-actions";
+                            delWrap.innerHTML = `
+                                <button class="file-action-btn" title="Đổi tên" onclick="event.stopPropagation();showRenameModal('${(indexFile || filesInSub[0]).path}')">✏️</button>
+                                <button class="file-action-btn del" title="Xóa danh mục con" onclick="event.stopPropagation();showDeleteSubModal('${sec}','${sub}','${subLabel}')">🗑️</button>
+                            `;
+                            // Xóa file-actions cũ nếu có, thêm delWrap mới
+                            const oldActions = item.querySelector(".file-actions");
+                            if (oldActions) item.removeChild(oldActions);
+                            item.appendChild(delWrap);
+                            // Folder icon
+                            const icon = item.querySelector(".file-icon");
+                            if (icon) icon.textContent = "📁";
+                            fileList.appendChild(item);
+                        } else {
+                            // Có nhiều file → tạo group collapsible
+                            const subStateKey = `${sec}__${sub}`;
+                            if (sectionStates[subStateKey] === undefined) sectionStates[subStateKey] = { open: true };
+                            const subOpen = sectionStates[subStateKey].open;
+
+                            const subHdr = document.createElement("div");
+                            subHdr.className = "subsection-header";
+                            subHdr.id = `subhdr-${sec}-${sub}`;
+                            subHdr.innerHTML = `
+                                <span class="subsection-arrow ${subOpen ? 'open' : ''}">›</span>
+                                <span class="file-icon" style="font-size:.8rem">📁</span>
+                                <span style="flex:1">${subLabel}</span>
+                                <div class="subsection-header-actions" onclick="event.stopPropagation()">
+                                    <button class="subsection-del-btn" title="Xóa danh mục con này" onclick="showDeleteSubModal('${sec}','${sub}','${subLabel}')">🗑️</button>
+                                </div>
+                            `;
+                            subHdr.onclick = () => toggleSubsection(subStateKey, subHdr, `subfiles-${sec}-${sub}`);
+
+                            const subFiles = document.createElement("div");
+                            subFiles.className = `subsection-files${subOpen ? "" : " collapsed"}`;
+                            subFiles.id = `subfiles-${sec}-${sub}`;
+
+                            for (const f of filesInSub) {
+                                subFiles.appendChild(makeFileItem(f, 2.5));
+                            }
+
+                            fileList.appendChild(subHdr);
+                            fileList.appendChild(subFiles);
+                        }
+                    }
+                }
+
+                tree.appendChild(header);
+                tree.appendChild(fileList);
+            }
+        }
+
+        function makeFileItem(f, indentRem) {
+            const item = document.createElement("div");
+            item.className = `file-item${currentFile === f.path ? " active" : ""}`;
+            item.setAttribute("data-path", f.path);
+            item.style.paddingLeft = `${indentRem}rem`;
+
+            const icon = document.createElement("span");
+            icon.className = "file-icon";
+            icon.textContent = f.isIndex ? "🗒️" : "📄";
+
+            const nameSpan = document.createElement("span");
+            nameSpan.className = "file-item-name";
+            nameSpan.textContent = f.displayName;
+            nameSpan.title = f.display;
+
+            const actions = document.createElement("div");
+            actions.className = "file-actions";
+            actions.innerHTML = `
+                <button class="file-action-btn" title="Đổi tên" onclick="event.stopPropagation();showRenameModal('${f.path}')">✏️</button>
+                <button class="file-action-btn del" title="Xóa" onclick="event.stopPropagation();showDeleteModal('${f.path}')">🗑️</button>
+            `;
+
+            item.appendChild(icon);
+            item.appendChild(nameSpan);
+            item.appendChild(actions);
+            item.onclick = () => openFile(f.path);
+            return item;
+        }
+
+        function toggleSubsection(subStateKey, hdrEl, filesId) {
+            const wasOpen = sectionStates[subStateKey]?.open;
+            sectionStates[subStateKey] = { open: !wasOpen };
+            const filesEl = document.getElementById(filesId);
+            if (filesEl) filesEl.classList.toggle("collapsed", wasOpen);
+            const arr = hdrEl?.querySelector(".subsection-arrow");
+            if (arr) arr.classList.toggle("open", !wasOpen);
+        }
+
+
+        function toggleSection(sec) {
+            sectionStates[sec] = { open: !sectionStates[sec]?.open };
+            const el = document.getElementById(`section-${sec}`);
+            if (el) el.classList.toggle("collapsed");
+            const arrows = document.querySelectorAll(".section-arrow");
+            // re-render simpler: just toggle class
+            renderTree(allFiles.filter(f => {
+                const q = document.getElementById("searchInput").value.toLowerCase();
+                return !q || f.display.toLowerCase().includes(q);
+            }));
+        }
+
+        function filterFiles(query) {
+            const q = query.toLowerCase();
+            const filtered = q ? allFiles.filter(f => f.display.toLowerCase().includes(q) || f.name.toLowerCase().includes(q)) : allFiles;
+            renderTree(filtered);
+        }
+
+        // ── Init EasyMDE ──────────────────────────────────────────────────
+        function initEditor() {
+            easyMDE = new EasyMDE({
+                element: document.getElementById("editor"),
+                autofocus: false,
+                spellChecker: false,
+                autosave: { enabled: false },
+                toolbar: [
+                    "bold", "italic", "strikethrough", "|",
+                    "heading-1", "heading-2", "heading-3", "|",
+                    "unordered-list", "ordered-list", "checklist", "|",
+                    "link", {
+                        name: "upload-image",
+                        action: triggerImageUpload,
+                        className: "fa fa-picture-o",
+                        title: "Chèn ảnh từ máy (hoặc kéo thả vào editor)"
+                    }, "table", "|",
+                    "code", "quote", "|",
+                    "preview", "side-by-side", "fullscreen"
+                ],
+                shortcuts: { "toggleFullScreen": null },
+                status: false,
+                minHeight: "calc(100vh - 160px)"
+            });
+
+            easyMDE.codemirror.on("change", () => {
+                if (currentFile) {
+                    document.getElementById("saveBtn").disabled = false;
+                    const chars = easyMDE.value().length;
+                    document.getElementById("charCount").textContent = `${chars} ký tự`;
+                }
+            });
+
+            // Kéo thả ảnh
+            const wrap = document.getElementById("editorWrap");
+            wrap.addEventListener("dragover", e => { e.preventDefault(); wrap.classList.add("drag-over"); });
+            wrap.addEventListener("dragleave", () => wrap.classList.remove("drag-over"));
+            wrap.addEventListener("drop", e => {
+                e.preventDefault(); wrap.classList.remove("drag-over");
+                const files = e.dataTransfer.files;
+                if (files.length > 0) uploadImageFile(files[0]);
+            });
+
+            // Paste ảnh từ clipboard (Ctrl+V)
+            wrap.addEventListener("paste", e => {
+                const items = e.clipboardData?.items || [];
+                for (const item of items) {
+                    if (item.type.startsWith("image/")) {
+                        uploadImageFile(item.getAsFile());
+                        e.preventDefault();
+                        break;
+                    }
+                }
+            });
+        }
+
+        // ── Image Upload ──────────────────────────────────────────────────
+        function triggerImageUpload() {
+            if (!currentFile) { toast("❌ Mở file trước rồi upload ảnh!", "error"); return; }
+            const input = document.createElement("input");
+            input.type = "file"; input.accept = "image/*";
+            input.onchange = e => uploadImageFile(e.target.files[0]);
+            input.click();
+        }
+
+        async function uploadImageFile(file) {
+            if (!file) return;
+            if (!currentFile) { toast("❌ Mở file trước rồi chèn ảnh!", "error"); return; }
+
+            toast(`📤 Đang upload ${file.name}...`, "info");
+            const form = new FormData();
+            form.append("image", file);
+            form.append("caller_path", currentFile);
+
+            const res = await fetch("/api/upload", { method: "POST", body: form });
+            const data = await res.json();
+
+            if (!data.ok) { toast("❌ Upload thất bại: " + data.error, "error"); return; }
+
+            const altText = file.name.replace(/\.[^.]+$/, "").replace(/[-_]/g, " ");
+            const mdImg = `![${altText}](${data.url})`;
+            const cm = easyMDE.codemirror;
+            cm.replaceRange(mdImg, cm.getCursor());
+            toast("✅ Đã chèn ảnh: " + data.filename, "success");
+        }
+
+
+
+        // ── Open file ─────────────────────────────────────────────────────
+        async function openFile(path) {
+            const res = await fetch(`/api/file?path=${encodeURIComponent(path)}`);
+            if (!res.ok) { toast("Không thể mở file!", "error"); return; }
+            const data = await res.json();
+
+            currentFile = path;
+            easyMDE.value(data.content);
+            easyMDE.codemirror.clearHistory();
+
+            document.getElementById("emptyState").classList.add("hidden");
+            document.getElementById("editorWrap").classList.remove("hidden");
+            document.getElementById("currentFileLabel").textContent = `docs/${path}`;
+            document.getElementById("saveBtn").disabled = true;
+            document.getElementById("statusText").textContent = `Đang soạn: ${path}`;
+
+            // Update active class
+            document.querySelectorAll(".file-item").forEach(el => {
+                el.classList.toggle("active", el.getAttribute("data-path") === path);
+            });
+        }
+
+        // ── Save file ─────────────────────────────────────────────────────
+        async function saveFile() {
+            if (!currentFile) return;
+            const btn = document.getElementById("saveBtn");
+            btn.disabled = true;
+            btn.textContent = "⏳ Đang lưu...";
+
+            const res = await fetch("/api/file", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ path: currentFile, content: easyMDE.value() })
+            });
+            const data = await res.json();
+
+            if (data.ok) {
+                toast("✅ Đã lưu thành công!", "success");
+                btn.textContent = "💾 Lưu";
+                document.getElementById("statusText").textContent = `Đã lưu: ${currentFile}`;
+            } else {
+                toast("❌ Lưu thất bại: " + data.error, "error");
+                btn.disabled = false;
+                btn.textContent = "💾 Lưu";
+            }
+        }
+
+        // ── Keyboard shortcut Ctrl+S ──────────────────────────────────────
+        document.addEventListener("keydown", e => {
+            if ((e.ctrlKey || e.metaKey) && e.key === "s") { e.preventDefault(); saveFile(); }
+        });
+
+        // ── Rebuild ───────────────────────────────────────────────────────
+        async function rebuild() {
+            const btn = document.getElementById("rebuildBtn");
+            btn.disabled = true; btn.textContent = "⏳ Đang build...";
+            toast("⚡ Đang build MkDocs...", "info");
+            const res = await fetch("/api/rebuild", { method: "POST" });
+            const data = await res.json();
+            btn.disabled = false; btn.textContent = "⚡ Build";
+            if (data.ok) toast("✅ Build thành công!", "success");
+            else toast("❌ Build lỗi: " + data.error, "error");
+        }
+
+        // ── Git push ──────────────────────────────────────────────────────
+        async function gitPush() {
+            const msg = prompt("Commit message:", "docs: cập nhật tài liệu qua admin editor");
+            if (!msg) return;
+            const btn = document.getElementById("pushBtn");
+            btn.disabled = true; btn.textContent = "⏳ Pushing...";
+            toast("⬆️ Đang push lên GitHub...", "info");
+            const res = await fetch("/api/git/push", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: msg })
+            });
+            const data = await res.json();
+            btn.disabled = false; btn.textContent = "↑ Git Push";
+            if (data.ok) toast("✅ " + data.message, "success");
+            else toast("❌ Push lỗi: " + (data.error || ""), "error");
+        }
+
+        // ── New file modal ────────────────────────────────────────────────
+        function populateSectionSelect() {
+            const sel = document.getElementById("newSection");
+            sel.innerHTML = "";
+            const secs = [...new Set(allFiles.map(f => f.section).filter(s => s !== "root"))];
+            for (const s of secs) {
+                const opt = document.createElement("option");
+                opt.value = s; opt.textContent = s;
+                sel.appendChild(opt);
+            }
+            // Load subsections for default selected
+            if (secs.length > 0) loadSubsections(secs[0]);
+        }
+
+        async function loadSubsections(section) {
+            const sel = document.getElementById("newSubsection");
+            sel.innerHTML = '<option value="">— Không chọn —</option>';
+            if (!section) return;
+            const res = await fetch(`/api/subsections?section=${encodeURIComponent(section)}`);
+            const subs = await res.json();
+            for (const sub of subs) {
+                const opt = document.createElement("option");
+                opt.value = sub.folder;
+                opt.textContent = sub.label;
+                sel.appendChild(opt);
+            }
+        }
+
+        function switchModalTab(tab) {
+            ["file", "sub"].forEach(t => {
+                document.getElementById(`tab-${t}`).classList.toggle("active", t === tab);
+                document.getElementById(`panel-${t}`).classList.toggle("active", t === tab);
+            });
+        }
+
+        function showNewFileModal(defaultTab) {
+            document.getElementById("newFileModal").classList.remove("hidden");
+            switchModalTab(defaultTab || "file");
+
+            // Sync subSection select với cùng danh sách section
+            const secs = [...new Set(allFiles.map(f => f.section).filter(s => s !== "root"))];
+            const subSel = document.getElementById("subSection");
+            subSel.innerHTML = secs.map(s => `<option value="${s}">${s}</option>`).join("");
+            if (currentFile) subSel.value = currentFile.split("/")[0] || secs[0];
+
+            // Pre-select subsection based on current file
+            if (currentFile) {
+                const parts = currentFile.split("/");
+                const sec = document.getElementById("newSection");
+                if ([...sec.options].find(o => o.value === parts[0])) {
+                    sec.value = parts[0];
+                    loadSubsections(parts[0]).then(() => {
+                        if (parts.length > 2) {
+                            const sub = document.getElementById("newSubsection");
+                            if ([...sub.options].find(o => o.value === parts[1]))
+                                sub.value = parts[1];
+                        }
+                    });
+                }
+            }
+            setTimeout(() => document.getElementById("newTitle").focus(), 50);
+        }
+
+        function hideNewFileModal(e) {
+            if (!e || e.target.id === "newFileModal")
+                document.getElementById("newFileModal").classList.add("hidden");
+        }
+
+        function autoSlug() {
+            const title = document.getElementById("newTitle").value;
+            const slug = title.toLowerCase()
+                .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                .replace(/đ/g, "d").replace(/[^a-z0-9\s-]/g, "")
+                .trim().replace(/\s+/g, "-");
+            document.getElementById("newFilename").value = slug;
+        }
+
+        function autoSubFolder() {
+            const label = document.getElementById("subLabel").value;
+            const slug = label.toLowerCase()
+                .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                .replace(/đ/g, "d").replace(/[^a-z0-9\s-]/g, "")
+                .trim().replace(/\s+/g, "-");
+            document.getElementById("subFolder").value = slug;
+        }
+
+        async function createSubsection() {
+            const section = document.getElementById("subSection").value;
+            const label   = document.getElementById("subLabel").value.trim();
+            const folder  = document.getElementById("subFolder").value.trim();
+
+            if (!section || !label || !folder) { toast("Vui lòng điền đầy đủ thông tin!", "error"); return; }
+
+            const res = await fetch("/api/subsection/new", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ section, label, folder })
+            });
+            const data = await res.json();
+            if (!data.ok) { toast("❌ " + data.error, "error"); return; }
+
+            hideNewFileModal();
+            document.getElementById("subLabel").value = "";
+            document.getElementById("subFolder").value = "";
+            await loadFiles();
+            openFile(data.path);
+            toast(`✅ Đã tạo danh mục con "${data.label}"!`, "success");
+        }
+
+        async function createFile() {
+            const section = document.getElementById("newSection").value;
+            const subsection = document.getElementById("newSubsection").value;
+            const title = document.getElementById("newTitle").value.trim();
+            const filename = document.getElementById("newFilename").value.trim();
+
+            if (!section || !title || !filename) { toast("Vui lòng điền đầy đủ thông tin!", "error"); return; }
+
+            const res = await fetch("/api/file/new", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ section, subsection, title, filename })
+            });
+            const data = await res.json();
+            if (!data.ok) { toast("❌ " + data.error, "error"); return; }
+
+            hideNewFileModal();
+            document.getElementById("newTitle").value = "";
+            document.getElementById("newFilename").value = "";
+            await loadFiles();
+            openFile(data.path);
+            toast("✅ Đã tạo bài viết mới!", "success");
+        }
+
+        // ── Toast ─────────────────────────────────────────────────────────
+        function toast(msg, type = "info") {
+            const c = document.getElementById("toastContainer");
+            const t = document.createElement("div");
+            t.className = `toast ${type}`;
+            t.textContent = msg;
+            c.appendChild(t);
+            setTimeout(() => { t.style.opacity = "0"; t.style.transition = "opacity .3s"; setTimeout(() => t.remove(), 300); }, 3000);
+        }
+
+        // ── Rename ────────────────────────────────────────────────────────
+        let _renameTargetPath = null;
+
+        function showRenameModal(path) {
+            _renameTargetPath = path;
+            document.getElementById("renameOldPath").value = path;
+            // Pre-fill slug from current filename
+            const slug = path.split("/").pop().replace(/\.md$/, "");
+            document.getElementById("renameNewSlug").value = slug;
+            document.getElementById("renameModal").classList.remove("hidden");
+            setTimeout(() => document.getElementById("renameNewSlug").select(), 50);
+        }
+
+        function hideRenameModal(e) {
+            if (!e || e.target.id === "renameModal")
+                document.getElementById("renameModal").classList.add("hidden");
+        }
+
+        async function doRename() {
+            const newSlug = document.getElementById("renameNewSlug").value.trim();
+            if (!newSlug || !_renameTargetPath) return;
+
+            // Giữ nguyên thư mục, chỉ đổi tên file
+            const parts = _renameTargetPath.split("/");
+            parts[parts.length - 1] = newSlug.endsWith(".md") ? newSlug : newSlug + ".md";
+            const newPath = parts.join("/");
+
+            if (newPath === _renameTargetPath) { hideRenameModal(); return; }
+
+            const res = await fetch("/api/file/rename", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ old_path: _renameTargetPath, new_path: newPath })
+            });
+            const data = await res.json();
+
+            if (!data.ok) { toast("❌ Đổi tên thất bại: " + data.error, "error"); return; }
+
+            hideRenameModal();
+            if (currentFile === _renameTargetPath) currentFile = data.new_path;
+            await loadFiles();
+            if (currentFile === data.new_path) openFile(data.new_path);
+            toast("✅ Đã đổi tên thành công!", "success");
+        }
+
+        // ── Delete Subsection ─────────────────────────────────────────────
+        let _deleteSubSection = null, _deleteSubFolder = null;
+
+        function showDeleteSubModal(section, folder, label) {
+            _deleteSubSection = section;
+            _deleteSubFolder = folder;
+            document.getElementById("deleteSubName").textContent = label;
+            document.getElementById("deleteSubModal").classList.remove("hidden");
+        }
+
+        function hideDeleteSubModal(e) {
+            if (!e || e.target.id === "deleteSubModal")
+                document.getElementById("deleteSubModal").classList.add("hidden");
+        }
+
+        async function doDeleteSub() {
+            if (!_deleteSubSection || !_deleteSubFolder) return;
+            const res = await fetch(`/api/subsection?section=${encodeURIComponent(_deleteSubSection)}&folder=${encodeURIComponent(_deleteSubFolder)}`, { method: "DELETE" });
+            const data = await res.json();
+
+            if (!data.ok) { toast("❌ Xóa thất bại: " + data.error, "error"); return; }
+
+            hideDeleteSubModal();
+            // Nếu đang mở file thuộc subsection bị xóa → clear editor
+            if (currentFile && currentFile.startsWith(`${_deleteSubSection}/${_deleteSubFolder}/`)) {
+                currentFile = null;
+                document.getElementById("editorWrap").classList.add("hidden");
+                document.getElementById("emptyState").classList.remove("hidden");
+                document.getElementById("currentFileLabel").textContent = "Chọn một file để bắt đầu soạn thảo";
+                easyMDE.value("");
+            }
+            await loadFiles();
+            toast(`🗑️ Đã xóa danh mục con!`, "success");
+        }
+
+        // ── Delete ────────────────────────────────────────────────────────
+        let _deleteTargetPath = null;
+
+        function showDeleteModal(path) {
+            _deleteTargetPath = path;
+            document.getElementById("deleteFileName").textContent = path;
+            document.getElementById("deleteModal").classList.remove("hidden");
+        }
+
+        function hideDeleteModal(e) {
+            if (!e || e.target.id === "deleteModal")
+                document.getElementById("deleteModal").classList.add("hidden");
+        }
+
+        async function doDelete() {
+            if (!_deleteTargetPath) return;
+            const res = await fetch(`/api/file?path=${encodeURIComponent(_deleteTargetPath)}`, { method: "DELETE" });
+            const data = await res.json();
+
+            if (!data.ok) { toast("❌ Xóa thất bại: " + data.error, "error"); return; }
+
+            hideDeleteModal();
+            if (currentFile === _deleteTargetPath) {
+                currentFile = null;
+                document.getElementById("editorWrap").classList.add("hidden");
+                document.getElementById("emptyState").classList.remove("hidden");
+                document.getElementById("currentFileLabel").textContent = "Chọn một file để bắt đầu soạn thảo";
+                easyMDE.value("");
+            }
+            await loadFiles();
+            toast("🗑️ Đã xóa bài viết!", "success");
+        }
+    </script>
+</body>
+
+</html>
